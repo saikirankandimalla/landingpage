@@ -4,6 +4,13 @@ import { Check, ChevronDown, Handshake, Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { STARTING_PRICE_PER_SQUARE_YARD } from "@/lib/thomes-content";
 
 import landImage from "@/assets/thomes/land-development.jpg";
@@ -169,6 +176,55 @@ function HouseIcon({ className }: { className?: string }) {
   );
 }
 
+function SiteVisitForm({
+  className,
+  projectNames,
+  submitted,
+  onSubmit,
+}: {
+  className: string;
+  projectNames: string[];
+  submitted: boolean;
+  onSubmit: () => void;
+}) {
+  return (
+    <form
+      className={className}
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+    >
+      <Input aria-label="Name" autoComplete="name" className={FIELD} name="name" placeholder="Name" required />
+      <Input aria-label="Occupation" autoComplete="organization-title" className={FIELD} name="occupation" placeholder="Occupation" />
+      <Input aria-label="Phone number" autoComplete="tel" className={FIELD} inputMode="tel" name="phone" pattern="[+0-9 ()-]{8,18}" placeholder="Phone Number" required />
+      <Input aria-label="Place of residence" autoComplete="address-level2" className={FIELD} name="residence" placeholder="Place of Residence" />
+
+      <div className="relative">
+        <select aria-label="Interested in project" className={`${FIELD} appearance-none pr-9`} defaultValue="" name="project">
+          <option value="" disabled>Interested in Project</option>
+          {projectNames.map((name) => <option key={name} value={name}>{name}</option>)}
+        </select>
+        <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3 top-2 size-4 text-[#4f4c4d]" />
+      </div>
+      <Input aria-label="Message" className={FIELD} name="message" placeholder="Message" />
+
+      <div className="flex items-center justify-center sm:col-span-2 sm:justify-end">
+        <Button className={`h-[44px] w-[180px] rounded-full text-[22px] font-medium ${RED_BTN}`} type="submit">
+          Submit
+        </Button>
+      </div>
+
+      {submitted && (
+        <p aria-live="polite" className="text-sm font-medium sm:col-span-2">
+          Thank you for your interest. Please call{" "}
+          <a className={`font-bold ${NAVY}`} href="tel:+918602860256">8602 8602 56</a> to confirm your visit.
+        </p>
+      )}
+    </form>
+  );
+}
+
 const navLinks = [
   ["Home", "#home"],
   ["Projects", "#projects"],
@@ -197,6 +253,7 @@ function Index() {
     { name: "Nature County", detail: "50 Acres | 599 Plots", location: "Peddakandukur", image: projectNatureCounty, href: "https://thomesinfra.com/projects/-nature-county" },
     { name: "Ala Vaikuntapuram", detail: "22.5 Acres | 203 Plots", location: "Bahupeta Yadadri", image: projectAlaVaikuntapuram, href: "https://thomesinfra.com/projects/th-10-avp-bahupeta-dtcp" },
   ];
+  const projectNames = projects.map(({ name }) => name);
 
   const stripItems = [
     { icon: <RoadIcon className="h-[66px] w-[96px]" />, lines: [["Commute", true], ["anywhere in minutes", true], ["via RRR", false]] },
@@ -214,7 +271,8 @@ function Index() {
   ];
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#e9e8e8] font-['Montserrat',sans-serif] text-[#4f4c4d]">
+    <Dialog>
+      <main className="min-h-screen overflow-hidden bg-[#e9e8e8] font-['Montserrat',sans-serif] text-[#4f4c4d]">
       {/* ═════════ HEADER ═════════ */}
       <header className={`relative z-20 mx-auto flex min-h-[96px] max-w-[1600px] items-center justify-between gap-4 py-3 lg:min-h-[165px] ${PAD}`}>
         <nav aria-label="Main navigation" className="hidden items-center gap-[17px] md:flex">
@@ -234,7 +292,7 @@ function Index() {
         </nav>
 
         <a aria-label="T Homes Infra home" className="ml-auto flex items-center" href="#home">
-          <img alt="T Homes Infra" className="w-40 object-contain sm:w-52 lg:w-[330px]" src={homesLogoAsset.url} />
+          <img alt="T Homes Infra" className="w-28 object-contain sm:w-36 lg:w-[220px]" src={homesLogoAsset.url} />
         </a>
 
         <Button
@@ -326,10 +384,10 @@ function Index() {
           ))}
           <div className="col-span-2 flex flex-col items-center justify-center gap-3 md:col-span-1" aria-label="Approved by TG RERA, HMDA and authorities">
             <div className="flex flex-wrap items-center justify-center gap-2">
-              <img alt="TG RERA" className="h-10 w-auto object-contain lg:h-12" src={TG_RERA_IMAGE} />
-              <img alt="HMDA" className="h-10 w-auto object-contain mix-blend-multiply lg:h-12" src={approvalHmda} />
-              <img alt="DTCP approved" className="size-11 object-contain lg:size-[60px]" src={approvalDtcp} />
-              <img alt="Telangana government" className="size-11 object-contain lg:size-[60px]" src={approvalTelangana} />
+              <img alt="TG RERA" className="size-16 object-contain lg:size-[88px]" src={TG_RERA_IMAGE} />
+              <img alt="HMDA" className="h-14 w-auto object-contain mix-blend-multiply lg:h-[72px]" src={approvalHmda} />
+              <img alt="DTCP approved" className="size-14 object-contain lg:size-[72px]" src={approvalDtcp} />
+              <img alt="Telangana government" className="size-14 object-contain lg:size-[72px]" src={approvalTelangana} />
             </div>
             <span className="text-[14px] font-semibold text-[#231f20] lg:text-[19px]">Approved</span>
           </div>
@@ -387,7 +445,7 @@ function Index() {
                 </li>
               ))}
             </ul>
-            <a className={`mt-7 inline-flex h-[34px] items-center rounded-full px-6 text-[13px] font-semibold transition-colors lg:text-[16px] ${RED_OUTLINE}`} href="#projects">
+            <a className={`mt-7 inline-flex h-[34px] items-center rounded-full px-6 text-[13px] font-semibold transition-colors lg:text-[16px] ${RED_OUTLINE}`} href="https://thomesinfra.com/about">
               Know More
             </a>
           </div>
@@ -474,49 +532,12 @@ function Index() {
             </p>
           </div>
 
-          <form
+          <SiteVisitForm
             className="m-3 grid grid-cols-1 gap-x-[30px] gap-y-3 rounded-[40px] bg-[#d3d2d2] px-6 py-6 sm:grid-cols-2 lg:my-3 lg:ml-[1%] lg:mr-[2.2%] lg:px-8"
-            onSubmit={(event) => {
-              event.preventDefault();
-              setSubmitted(true);
-            }}
-          >
-            <Input aria-label="Name" autoComplete="name" className={FIELD} name="name" placeholder="Name" required />
-            <Input aria-label="Occupation" autoComplete="organization-title" className={FIELD} name="occupation" placeholder="Occupation" />
-            <Input aria-label="Phone number" autoComplete="tel" className={FIELD} inputMode="tel" name="phone" pattern="[+0-9 ()-]{8,18}" placeholder="Phone Number" required />
-            <Input aria-label="Place of residence" autoComplete="address-level2" className={FIELD} name="residence" placeholder="Place of Residence" />
-
-            <div className="relative">
-              <select aria-label="Interested in project" className={`${FIELD} appearance-none pr-9`} defaultValue="" name="project">
-                <option value="" disabled>Interested in Project</option>
-                {projects.map((project) => <option key={project.name} value={project.name}>{project.name}</option>)}
-              </select>
-              <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3 top-2 size-4 text-[#4f4c4d]" />
-            </div>
-            <Input aria-label="Message" className={FIELD} name="message" placeholder="Message" />
-
-            {/* <div className="relative">
-              <select aria-label="Bank loan facility available" className={`${FIELD} appearance-none pr-9`} defaultValue="" name="loan">
-                <option value="" disabled>Bank Loan Facility Available</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-                <option value="need-information">I’d like more information</option>
-              </select>
-              <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3 top-2 size-4 text-[#4f4c4d]" />
-            </div> */}
-            <div className="flex items-center justify-center sm:col-span-1.7 sm:justify-end">
-              <Button className={`h-[44px] w-[180px] rounded-full text-[22px] font-medium ${RED_BTN}`} type="submit">
-                Submit
-              </Button>
-            </div>
-
-            {submitted && (
-              <p aria-live="polite" className="text-sm font-medium sm:col-span-2">
-                Thank you for your interest. Please call{" "}
-                <a className={`font-bold ${NAVY}`} href="tel:+918602860256">8602 8602 56</a> to confirm your visit.
-              </p>
-            )}
-          </form>
+            onSubmit={() => setSubmitted(true)}
+            projectNames={projectNames}
+            submitted={submitted}
+          />
         </div>
       </section>
 
@@ -559,6 +580,26 @@ function Index() {
           </div>
         </div>
       </footer>
-    </main>
+      </main>
+      <DialogTrigger asChild>
+        { <Button
+          className={`fixed bottom-5 right-5 z-40 h-12 rounded-full px-6 text-base font-semibold shadow-lg ${RED_BTN}`}
+          type="button"
+        >
+          Book a Site Visit
+        </Button> }
+      </DialogTrigger>
+      <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto border-0 bg-[#e9e8e8] p-6 sm:rounded-[32px] sm:p-8">
+        <DialogHeader>
+          <DialogTitle className={`text-2xl font-semibold ${NAVY}`}>Book Your Site Visit</DialogTitle>
+        </DialogHeader>
+        <SiteVisitForm
+          className="grid grid-cols-1 gap-x-[30px] gap-y-3 rounded-[28px] bg-[#d3d2d2] p-5 sm:grid-cols-2 sm:p-6"
+          onSubmit={() => setSubmitted(true)}
+          projectNames={projectNames}
+          submitted={submitted}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
